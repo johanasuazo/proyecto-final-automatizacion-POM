@@ -4,7 +4,7 @@ import org.jboss.aerogear.security.otp.Totp;
 
 public class TowFactorAuthentication {
 
-
+    public TowFactorAuthentication towFactorAuthentication(){return new TowFactorAuthentication();}
     public static String getTwoFactorCode(String secret) {
 
         String twoFactorCode;

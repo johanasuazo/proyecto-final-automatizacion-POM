@@ -2,9 +2,10 @@ package utils;
 
 import java.io.*;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 public class ConfigFileReader {
-
+    static Logger logger = Logger.getLogger(ConfigFileReader.class.getName());
     private Properties properties;
     private final String propertyFilePath;
 
@@ -14,7 +15,13 @@ public class ConfigFileReader {
             properties = new Properties();
             properties.load(reader);
         } catch (IOException e) {
-            throw new RuntimeException("Properties file not found at path : " + propertyFilePath);
+            throw new MissingPropertyExceptions(propertyFilePath);
+        }
+    }
+    public class MissingPropertyExceptions extends RuntimeException {
+
+        public MissingPropertyExceptions(String propertyFilePath) {
+            super("Properties file not found at path : " + propertyFilePath);
         }
     }
 
@@ -36,18 +43,38 @@ public class ConfigFileReader {
             }
         return p;
         }else
-            throw new RuntimeException("Property not specified in the " + propertyFilePath + " file for the Key: " + key);
+            throw new MissingPropertyException(propertyFilePath, key);
+
+    }
+
+    public class MissingPropertyException extends RuntimeException {
+
+        public MissingPropertyException(String propertyFilePath, String key) {
+            super("Property not specified in the " + propertyFilePath + " file for the Key: " + key);
+        }
     }
 
     public static void changeProperty(String filename, String key, String value) throws IOException {
         Properties prop =new Properties();
-        prop.load(new FileInputStream(filename));
+        try (FileInputStream fileInputStream = new FileInputStream(filename)){
+            prop.load(fileInputStream);
+        } catch (IOException e){
+            logger.info(e.toString());
+        }
         prop.setProperty(key, value);
-        prop.store(new FileOutputStream(filename),null);
+        try (FileOutputStream fileOutputStream = new FileOutputStream(filename)){
+            prop.store(fileOutputStream,null);
+        } catch (IOException e){
+            logger.info(e.toString());
+        }
     }
 
     public void setProperties(String filename,String key, String value) throws IOException {
         properties.setProperty(key, value);
-        properties.store(new FileOutputStream(filename),null);
+        try (FileOutputStream fileOutputStream = new FileOutputStream(filename)){
+            properties.store(fileOutputStream,null);
+        } catch (IOException e){
+            logger.info(e.toString());
+        }
     }
 }

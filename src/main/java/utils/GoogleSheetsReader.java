@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class GoogleSheetsReader {
+    public GoogleSheetsReader googleSheetsReader(){ return new GoogleSheetsReader();}
     private static final String APPLICATION_NAME = "Google Sheets";
 
     public static List<List<Object>> read(String spreadSheetId, String range) throws GeneralSecurityException, IOException {

@@ -30,7 +30,14 @@ public class ConnectionManagerDB {
             logger.log(Level.FINE, "Connection successful");
             return connection;
         } catch (ClassNotFoundException | SQLException ex) {
-            throw new RuntimeException("Falló la creación de la conexión con la BD de MySQL, error: "+ ex.getMessage());
+            throw new MissingPropertyException(ex.getMessage());
+        }
+    }
+
+    public class MissingPropertyException extends RuntimeException {
+
+        public MissingPropertyException(String getMessage) {
+            super("Falló la creación de la conexión con la BD de MySQL, error: "+ getMessage);
         }
     }
 
